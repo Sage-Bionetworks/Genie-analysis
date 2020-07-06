@@ -15,20 +15,20 @@ def get_available_releases(syn: Synapse, fileview_synid: str) -> dict:
         Mapping between release and Synapse id of its folder
 
     """
-    releases = syn.tableQuery(f"select name, id from {fileview_synid}")
+    releases = syn.tableQuery(f"select name, id from {fileview_synid} "
+                              "where name <> 'case_lists'")
     releasesdf = releases.asDataFrame()
     release_map = {}
     for _, row in releasesdf.iterrows():
         print(row['name'])
         release_name = row['name'].split(" ")
         release = release_name[0]
-        if row['name'] != "case_lists":
-            # This logic is because the consortium release folders are
-            # in 'Release X' folder names.
-            if len(release_name) > 1:
-                release = release_name[1]
-            if "." in release or "-" in release:
-                release_map[release] = row['id']
+        # This logic is because the consortium release folders are
+        # in 'Release X' folder names.
+        if len(release_name) > 1:
+            release = release_name[1]
+        if "." in release or "-" in release:
+            release_map[release] = row['id']
     print("Choose from these releases: {}".format(
         ", ".join(release_map.keys())
     ))
