@@ -19,12 +19,12 @@ source("utils.R")
 
 ```{r}
 # Update this RELEASE value
-RELEASE = "8.0-public"
+RELEASE = "1.0.1"
 
 fileview_synid = get_genie_fileview_synid()
 releases = get_available_releases(fileview_synid)
 if (RELEASE %in% names(releases)) {
-  genie_file_map = get_all_genie_files(releases[RELEASE])
+  genie_file_map = get_all_genie_files(releases[[RELEASE]])
 } else {
     stop("Release does not exist: {RELEASE}")
 }
