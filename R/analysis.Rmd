@@ -1,0 +1,32 @@
+---
+title: "GENIE example analysis"
+output: html_notebook
+---
+
+This is an example notebook of how you would use the functions in `utils.R` to interact with GENIE data.
+
+```{r}
+library(glue)
+library(synapser)
+library(synapserutils)
+synLogin()
+
+source("utils.R")
+```
+
+
+## Get the data
+
+```{r}
+# Update this RELEASE value
+RELEASE = "8.0-public"
+
+fileview_synid = get_genie_fileview_synid()
+releases = get_available_releases(fileview_synid)
+if (RELEASE %in% names(releases)) {
+  genie_file_map = get_all_genie_files(releases[RELEASE])
+} else {
+    stop("Release does not exist: {RELEASE}")
+}
+```
+

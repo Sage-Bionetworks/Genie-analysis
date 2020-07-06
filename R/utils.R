@@ -36,7 +36,6 @@ get_available_releases <- function(fileview_synid) {
 #' get_genie_fileview_synid()
 get_genie_fileview_synid <- function() {
   current_user = synGetUserProfile()$ownerId
-  current_user = 5
   fileview_synid = tryCatch({
       # this rest call will throw an error if member is not part of the team
       synRestGET(glue::glue("/team/3326313/member/{current_user}"))
