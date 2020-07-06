@@ -1,3 +1,6 @@
+# This script is an example of how to interact with a GENIE BigQuery
+# Table.  There are other more advanced SQL commands that you can
+# leverage.
 library(bigrquery)
 
 bq_auth()
