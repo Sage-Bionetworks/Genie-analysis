@@ -78,7 +78,7 @@ def get_all_genie_files(syn: Synapse, folderid: str,
 
 def get_genie_file(syn: Synapse, folderid: str, filetype: str,
                    download_location: str = None) -> dict:
-    """Download all GENIE files for a specific release
+    """Download specific GENIE filetype from a specific release
 
     Args:
         syn: Synapse connection
@@ -100,14 +100,15 @@ def get_genie_file(syn: Synapse, folderid: str, filetype: str,
     for file_info in files:
         filename = file_info['name']
         if filetype in filename and not filename.startswith("meta"):
-            file_ent = syn.get(file_info['id'])
+            file_ent = syn.get(file_info['id'],
+                               download_location=download_location)
             genie_file_map[filename] = file_ent.path
 
     return genie_file_map
 
 
 # TODO: can also download them as csv files for people to just read
-def get_genie_bpc_tables(syn) -> dict:
+def get_genie_bpc_tables(syn: Synapse) -> dict:
     """Get BPC tables
 
     Returns:
