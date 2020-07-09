@@ -1,25 +1,31 @@
-"""Example analysis code"""
+"""Example analysis code
+Must have synapseclient installed
+`pip install synapseclient`
+Highly recommend pandas when working with dataframes,
+but it is not necessary `pip install pandas`
+"""
+import pandas
 import synapseclient
 
-import utils
-
-RELEASE = "8.0-public"
 
 def main():
     # Need to be logged into synapse. Set up ~/.synapseConfig
     syn = synapseclient.login()
 
-    # Do not modify these lines
-    fileview_synid = utils.get_genie_fileview_synid(syn)
-    releases = utils.get_available_releases(syn, fileview_synid)
-    if RELEASE in releases:
-        genie_file_map = utils.get_all_genie_files(syn, releases[RELEASE])
-    else:
-        raise ValueError(f"Release does not exist: {RELEASE}")
+    # Navigate to GENIE site and get release 8.0 clinical sample
+    # Synapse Id (synapse.org/genie)
+    sample_ent = syn.get("syn22228695")
+    print(sample_ent.path)
 
-    # Begin your analysis
+    # If you have pandas installed:
+    sampledf = pandas.read_csv(sample_ent.path,
+                               sep="\t", comment="#")
+    # obtain oncotree code distribution
+    oncotree_counts = sampledf.ONCOTREE_CODE.value_counts()
 
     # Write files out
+    oncotree_counts.to_csv("oncotree_code_dist.csv",
+                           header=['count'])
 
 if __name__ == "__main__":
     main()
