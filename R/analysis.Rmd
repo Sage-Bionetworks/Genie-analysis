@@ -1,32 +1,61 @@
 ---
-title: "GENIE example analysis"
-output: html_notebook
+title: "GENIE Analysis example"
+output:
+  html_document:
+    df_print: paged
 ---
 
-This is an example notebook of how you would use the functions in `utils.R` to interact with GENIE data.
+This is an example notebook of how to interact with the public GENIE data.
+This notebook assumes that you already have a synapse account and you have
+accepted to the the GENIE data conditions for use.
+
+## Using `synapser`
+
+`synapser` is the `R` Synapse client. It allows you to interact with files in Synapse in an R session.
+The installation instructions can be found [here](https://r-docs.synapse.org/).
+
+Once you have installed `synapser`, you will want to set up your [R Synapse credentials](https://r-docs.synapse.org/articles/manageSynapseCredentials.html)
 
 ```{r}
-library(glue)
 library(synapser)
-library(synapserutils)
 synLogin()
-
-source("utils.R")
 ```
 
 
-## Get the data
+## Getting the data
+
+Once you have installed `synapser`, you are ready to interact with the data!
+Please head to the [GENIE site](synapse.org/genie) and determine which release
+you would like to interact with.
+
+Everything in Synapse has a Synapse Id.  If you want to download the sample file
+for release 8.0, you will click on the "Files" tab, then navigate through "Data Releases"
+and click [Release 8.0-public](https://www.synapse.org/#!Synapse:syn22228642).
+You will see that the sample file has Synapse Id: syn22228695
 
 ```{r}
-# Update this RELEASE value
-RELEASE = "1.0.1"
-
-fileview_synid = get_genie_fileview_synid()
-releases = get_available_releases(fileview_synid)
-if (RELEASE %in% names(releases)) {
-  genie_file_map = get_all_genie_files(releases[[RELEASE]])
-} else {
-    stop("Release does not exist: {RELEASE}")
-}
+sample_ent = synGet("syn22228695")
+print(sample_ent$path)
 ```
 
+
+## Your analysis
+
+As a simple example, I want to see the distribution of AGE_AT_SEQ_REPORT for GENIE samples.
+
+```{r}
+sampledf = read.csv(sample_ent$path, sep = "\t", comment.char = "#")
+
+hist(as.numeric(sampledf$AGE_AT_SEQ_REPORT),
+     main = "Distribution of AGE_AT_SEQ_REPORT",
+     xlab = "Age",
+     ylab = "Number of Samples")
+```
+
+I also want to determine the number of samples per oncotree code
+
+
+```{r}
+oncotree_codes = table(sampledf$ONCOTREE_CODE)
+write.csv(oncotree_codes, "oncotree_code_dist.csv", row.names = F)
+```
