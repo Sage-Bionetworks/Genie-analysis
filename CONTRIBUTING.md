@@ -10,7 +10,16 @@ See the [Github docs](https://help.github.com/articles/fork-a-repo/) for how to 
 
 Then, [clone the repository](https://help.github.com/articles/cloning-a-repository/) to your local machine so you can begin making changes.
 
+```
+git clone https://github.com/<your-gh-user>/Genie-analysis.git
+```
+
 Add this repository as an [upstream remote](https://help.github.com/en/articles/configuring-a-remote-for-a-fork) on your local git repository so that you are able to fetch the latest commits.
+
+```
+cd Genie-analysis
+git remote add upstream https://github.com/Sage-Bionetworks/Genie-analysis
+```
 
 On your local machine make sure you have the latest version of the `main` branch:
 
