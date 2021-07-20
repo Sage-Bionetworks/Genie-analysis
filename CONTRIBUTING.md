@@ -30,12 +30,11 @@ git pull upstream main
 
 ### Commit and Create a Pull Request
 
-Create your own branch from the `main` branch.  Create your own analysis folder. Here I am naming my branch `analysis-a`, but it can be something more descriptive:
+Create your own branch from the `main` branch.  Create your own analysis folder or choose to put your analysis code in an existing correct project or analysis folder. Here I am naming my branch `analysis-a`, but it can be something more descriptive:
 
 ```
 git checkout -b analysis-a
 git push --set-upstream origin analysis-a
-mkdir analysis-a
 ```
 
 [Commit the scripts or changes](https://guides.github.com/introduction/git-handbook/#basic-git) you would like and create a [pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) against this respository.  Your contribution will be reviewed and merged.
