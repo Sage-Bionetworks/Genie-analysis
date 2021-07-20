@@ -1,7 +1,7 @@
 
 ## Contributing
 
-We welcome all contributions!  Please head to [issues](https://github.com/Sage-Bionetworks/Genie-analysis/issues) to either file any analysis requests/errors or find a task you want to assist with.  Make sure to assign yourself the task if you decide to work on it.
+We welcome all contributions! This repository is structured such that each analysis or project will have its own folder. Please head to [issues](https://github.com/Sage-Bionetworks/Genie-analysis/issues) to either file any analysis requests/errors or find a task you want to assist with.  Make sure to assign yourself the task if you decide to work on it.
 
 
 ### Fork and clone this repository
@@ -21,11 +21,12 @@ git pull upstream main
 
 ### Commit and Create a Pull Request
 
-Create your own branch from the `main` branch.  Here I am naming my branch `analysis-a`, but it can be something more descriptive:
+Create your own branch from the `main` branch.  Create your own analysis folder. Here I am naming my branch `analysis-a`, but it can be something more descriptive:
 
 ```
 git checkout -b analysis-a
 git push --set-upstream origin analysis-a
+mkdir analysis-a
 ```
 
 [Commit the scripts or changes](https://guides.github.com/introduction/git-handbook/#basic-git) you would like and create a [pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) against this respository.  Your contribution will be reviewed and merged.
