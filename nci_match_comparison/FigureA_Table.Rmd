@@ -127,7 +127,7 @@ tb_patient_counts <- final %>%
 tb_patient_counts
 
 ```
-## Processing data for tumor frequencies graph
+## Processing data for tumor frequency graph
 
 ```{r message=FALSE, warning=FALSE}
 # Select only specific cancer types that should be display in the graph 
@@ -174,6 +174,8 @@ code <- c("X")
 counts_matches_parent_node <- c(0)
 
 df_x <- data.frame(summarised_parent_node, code, counts_matches_parent_node)
+
+# bind dummy df with the rest of the data
 df_with_x <- parent_child_tumor %>%
   rbind(df_x)
 level_order <- factor(df_with_x$code, rev(final_ordered_ls))
@@ -195,7 +197,7 @@ df_with_x$summarised_parent_node <- factor(df_with_x$summarised_parent_node,
 
 ```{r message=FALSE, warning=FALSE}
 
-stacked_arm_tumor <- ggplot(df_with_x, aes(fill= forcats::fct_rev(summarised_parent_node), 
+plt <- ggplot(df_with_x, aes(fill= forcats::fct_rev(summarised_parent_node), 
                           x= level_order, y=counts_matches_parent_node)) + 
                           geom_bar(position="fill", stat="identity", color='black', 
                                    size=0.09) +
@@ -221,6 +223,6 @@ stacked_arm_tumor <- ggplot(df_with_x, aes(fill= forcats::fct_rev(summarised_par
                           guides(fill = guide_legend(reverse=TRUE))
 ```
 
-```{r fig.cap = "Frequency of matches per tumor type", message=FALSE, warning=FALSE}
-stacked_arm_tumor
+```{r fig.cap = "Frequencies per tumor type", message=FALSE, warning=FALSE}
+plt
 ```
