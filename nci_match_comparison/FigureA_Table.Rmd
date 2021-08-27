@@ -4,8 +4,9 @@ output:
   pdf_document: default
   html_document: default
 ---
+## Setup
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 library(ggplot2)
 library(dplyr)
 library(plotly)
@@ -14,6 +15,7 @@ library(tidyr)
 library(kableExtra)
 library(reshape2)
 ```
+## Read files 
 
 ```{r}
 
@@ -27,10 +29,11 @@ trial_matches <- read.csv(path_to_trial_match)
 oncotree_mapping_ <- read.csv(path_to_oncotree)
 oncotree_mapping <- oncotree_mapping_ %>%
     rename(oncotree_primary_diagnosis_name = value, parent_node = variable)
+    
 ```
+# Initial data manipulations for table and tumor frequency graph
 
-```{r}
-############# Table creation and initial data wrangling ##############
+```{r message=FALSE, warning=FALSE}
 
 # 1.0 genie release - number of patients matched in MatchMiner 
 code_old <- c("S1", "I", "W", "Z1B", "U", "Z1A", "Q","B", "C1", "H", "Y", "V","E",
@@ -110,18 +113,23 @@ final$CountsOld[final$code == "X"] <- 0
 final$CountsOld[is.na(final$CountsOld)] <- "-"
 
 ```
+## Table with patient counts that matched to a specific arm
 
-```{r}
-# Final table of trial matches (latest, 1.0 genie release)
+```{r message=FALSE, warning=FALSE}
+
 tb_patient_counts <- final %>%
   select(code,Target, CountsNew, CountsOld)%>%
   arrange(desc(CountsNew))%>%
   kbl(col.names = c("Arm", "Target","GENIE 9.0", "GENIE 1.0"), align = "c")%>%
   kable_styling(full_width = F)%>%
   add_header_above(c("Patients in GENIE cohort" = 4))
-```
 
-```{r}
+tb_patient_counts
+
+```
+## Processing data for tumor frequencies graph
+
+```{r message=FALSE, warning=FALSE}
 # Select only specific cancer types that should be display in the graph 
 parent_node <- c("Bowel", "Bladder/Urinary Tract", "Uterus", "Lung", "CNS/Brain", 
                  "Breast", "Ovary/Fallopian Tube", "Esophagus/Stomach", "Skin", "CUP")
@@ -183,8 +191,10 @@ df_with_x$summarised_parent_node <- factor(df_with_x$summarised_parent_node,
                                                      "Other"))
 ```
 
-```{r}
-# Final Graph, tumor frequencies per arm 
+## Graph of tumor frequencies per arm 
+
+```{r message=FALSE, warning=FALSE}
+
 stacked_arm_tumor <- ggplot(df_with_x, aes(fill= forcats::fct_rev(summarised_parent_node), 
                           x= level_order, y=counts_matches_parent_node)) + 
                           geom_bar(position="fill", stat="identity", color='black', 
@@ -209,4 +219,8 @@ stacked_arm_tumor <- ggplot(df_with_x, aes(fill= forcats::fct_rev(summarised_par
                                 legend.title = element_blank(), 
                                 legend.text = element_text(size=10)) +
                           guides(fill = guide_legend(reverse=TRUE))
+```
+
+```{r fig.cap = "Frequency of matches per tumor type", message=FALSE, warning=FALSE}
+stacked_arm_tumor
 ```
