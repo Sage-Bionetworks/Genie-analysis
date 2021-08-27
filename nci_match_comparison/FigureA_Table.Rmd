@@ -1,0 +1,228 @@
+---
+title: "Genie Cohort and MatchMiner Analysis (Table/Stacked graph)"
+output:
+  pdf_document: default
+  html_document: default
+---
+## Setup
+
+```{r, include=FALSE}
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(RColorBrewer)
+library(tidyr)
+library(kableExtra)
+library(reshape2)
+```
+## Read files 
+
+```{r}
+
+path_to_oncotree <- "mapping_oncotree.csv"
+
+# Matchminer Trial Match Collection for genie
+trial_matches <- read.csv(path_to_trial_match)
+
+# The original data was fetched from oncotree msk api http://oncotree.mskcc.org/#/home. 
+#Data was aggregated to only keep the parent node (variable column) and all of the subsequent nodes (value column)
+oncotree_mapping_ <- read.csv(path_to_oncotree)
+oncotree_mapping <- oncotree_mapping_ %>%
+    rename(oncotree_primary_diagnosis_name = value, parent_node = variable)
+    
+```
+# Initial data manipulations for table and tumor frequency graph
+
+```{r message=FALSE, warning=FALSE}
+
+# 1.0 genie release - number of patients matched in MatchMiner 
+code_old <- c("S1", "I", "W", "Z1B", "U", "Z1A", "Q","B", "C1", "H", "Y", "V","E",
+              "Z1D","S2","A","T","X")
+counts_old<-c(661,491,403,311,216,174,154,104,87,79,72,55,47,11,11,7,2,0)
+code_new <- c("S1", "I", "W", "Z1B", "U", "Z1A", "Q", "B", "C1", "H", "Y", "V","E","S2",
+             "A", "T", "X","K2", "Z1H", "Z1K", "J", "R",  "Z1L",  "Z1C", "N", "K1",  "M", 
+             "L", "Z1I", "Z1F", "C2", "F", "G","Z1E")
+arm_labels <- c(
+  "NF1 mut", 
+  "PIK3CA mut",
+  "FGFR alteration", 
+  "CCND1/2/3 amp",
+  "NF2 mut or del",
+  "NRAS mut", 
+  "HER2 amp",
+  "HER2 mut",
+  "MET amp", 
+  "BRAF V600E/K", 
+  "AKT mut", 
+  "cKIT mut",
+  "EGFR T790M",
+  "GNAQ/11 mut",
+  "EGFR mut",
+  "SMO or PTCH1 mut",
+  "DDR2 mut",
+  "FGFR mut or fusion",
+  "PTEN mut", 
+  "AKT mut",
+  "HER2 amp",
+  "BRAF fusion or non-V600E/K mut",
+  "BRAF non-V600 mut",
+  "CDK4/6 amp",
+  "PTEN mut or del",
+  "FGFR amp",
+  "TSC1/2 mut",
+  "mTOR mut",
+  "BRCA1/2 mut",
+  "PIK3CA mut",
+  "MET exon 14 del",
+  "ALK fusion",
+  "ROS1 fusion",
+  "NTRK fusions"
+)
+
+# Number of unique patients matched per arm (latest genie)
+trial_matches_mrn_unique_per_arm <- trial_matches %>%
+    group_by(code, mrn)%>%
+    summarise(unique_mrns = n_distinct(mrn))
+
+code_pt <- trial_matches_mrn_unique_per_arm %>%
+    filter(code %in% code_new )%>%
+    group_by(code) %>%
+    summarise(counts_trial_matches = n())
+
+# Data for 1.0 and latest Genie cohorts 
+old_genie <-data.frame(code_old, counts_old)%>%
+    rename(code = code_old)
+
+new_old <- code_pt %>%
+    left_join(old_genie, by="code") %>%
+    rename(Counts = counts_trial_matches)
+
+genie_latest <- data.frame(code_new,  arm_labels)%>%
+  rename(code = code_new)
+
+final<- new_old %>%
+    right_join(genie_latest, by = "code") %>% 
+    select(code, Counts, counts_old, arm_labels)%>% 
+    rename(CountsNew = Counts)%>%
+    rename(CountsOld= counts_old)%>%
+    rename(Target = arm_labels)
+
+# Assign a row for arm without matches
+final$CountsNew[final$code == "X"] <- 0
+final$CountsOld[final$code == "X"] <- 0
+final$CountsOld[is.na(final$CountsOld)] <- "-"
+
+```
+## Table with patient counts that matched to a specific arm
+
+```{r message=FALSE, warning=FALSE}
+
+tb_patient_counts <- final %>%
+  select(code,Target, CountsNew, CountsOld)%>%
+  arrange(desc(CountsNew))%>%
+  kbl(col.names = c("Arm", "Target","GENIE 9.0", "GENIE 1.0"), align = "c")%>%
+  kable_styling(full_width = F)%>%
+  add_header_above(c("Patients in GENIE cohort" = 4))
+
+tb_patient_counts
+
+```
+## Processing data for tumor frequency graph
+
+```{r message=FALSE, warning=FALSE}
+# Select only specific cancer types that should be display in the graph 
+parent_node <- c("Bowel", "Bladder/Urinary Tract", "Uterus", "Lung", "CNS/Brain", 
+                 "Breast", "Ovary/Fallopian Tube", "Esophagus/Stomach", "Skin", "CUP")
+
+summarised_parent_node <- c("Bowel", "Bladder/Urinary Tract", "Uterus", "Lung", 
+                            "CNS/Brain", "Breast", "Ovary/Fallopian Tube", 
+                            "Esophagus/Stomach","Skin", "CUP")
+
+# Specify arm code order
+final_ordered <- final[order(-final$CountsNew),]
+final_ordered_ls <- c(final_ordered$code)
+
+# Graph color palette 
+custom_colors <- c("#5e9cd3", "#eb7d3c", "#a5a5a5", "#fdbf2d", "#4674c1", 
+                  "#72ac4d", "#285f8f", "#9c4819", "#636363", "#987217", "#284576")
+custom_colors2 <- rev(custom_colors)
+
+# Create initial dataframe with trial matches and the parent oncotree nodes
+merged_with_engine_mapping <- trial_matches %>%
+    filter(code %in% code_new)%>%
+    group_by(code, oncotree_primary_diagnosis_name) %>%
+    summarise(counts_tumor_code_child = n(), unique_pts = n_distinct(mrn)) %>%
+    left_join(oncotree_mapping, by = "oncotree_primary_diagnosis_name")%>%
+    mutate(parent_node = replace(parent_node, parent_node == 'Other', 'CUP'))
+
+merged_with_engine_mapping <- merged_with_engine_mapping %>%
+  distinct(code, oncotree_primary_diagnosis_name, .keep_all = TRUE)
+df <- data.frame(parent_node, summarised_parent_node)
+
+# Merge the final node with the engine oncotree mapping
+df_merged <- merged_with_engine_mapping %>%
+    left_join(df, by="parent_node")
+df_merged$summarised_parent_node[is.na(df_merged$summarised_parent_node)] <- "Other"
+parent_child_tumor <- df_merged %>%
+    group_by(summarised_parent_node, code) %>%
+    summarise(counts_matches_parent_node = sum(unique_pts) )
+parent_child_tumor$code <- as.factor(parent_child_tumor$code)
+
+# Create a dummy df for rows without matches 
+summarised_parent_node <- c("Other")
+code <- c("X")
+counts_matches_parent_node <- c(0)
+
+df_x <- data.frame(summarised_parent_node, code, counts_matches_parent_node)
+
+# bind dummy df with the rest of the data
+df_with_x <- parent_child_tumor %>%
+  rbind(df_x)
+level_order <- factor(df_with_x$code, rev(final_ordered_ls))
+df_with_x$summarised_parent_node <- factor(df_with_x$summarised_parent_node, 
+                                           levels =c("Bowel",
+                                                     "Bladder/Urinary Tract",
+                                                     "Uterus",
+                                                     "Lung",
+                                                     "CNS/Brain",
+                                                     "Breast",
+                                                     "Ovary/Fallopian Tube",
+                                                     "CUP",
+                                                     "Esophagus/Stomach",
+                                                     "Skin",
+                                                     "Other"))
+```
+
+## Graph of tumor frequencies per arm 
+
+```{r message=FALSE, warning=FALSE}
+
+plt <- ggplot(df_with_x, aes(fill= forcats::fct_rev(summarised_parent_node), 
+                          x= level_order, y=counts_matches_parent_node)) + 
+                          geom_bar(position="fill", stat="identity", color='black', 
+                                   size=0.09) +
+                          coord_flip()+
+                          theme_bw() +
+                          scale_fill_manual(values=custom_colors2)+
+                          theme(text = element_text(size=25, colour = 'black'))+
+                          theme(panel.grid.major = element_blank(),
+                                panel.grid.minor = element_blank())+
+                          theme(axis.title.x=element_blank(),
+                                axis.text.x=element_blank(),
+                                axis.ticks.x=element_blank(),
+                                axis.title.y=element_blank())+
+                          theme(axis.text = element_text(size = 8, colour = 'Black'), 
+                                legend.key.size = unit(0.6, 'cm'),
+                                legend.key = element_rect(size = 1, fill = "white", 
+                                                          colour = "white"),
+                                legend.box.spacing = unit(1, 'cm') , 
+                                legend.direction = "horizontal", 
+                                legend.position="bottom", 
+                                legend.title = element_blank(), 
+                                legend.text = element_text(size=10)) +
+                          guides(fill = guide_legend(reverse=TRUE))
+```
+
+```{r fig.cap = "Frequencies per tumor type", message=FALSE, warning=FALSE}
+plt
+```
