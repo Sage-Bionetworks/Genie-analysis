@@ -13,4 +13,4 @@ manuscript "AACR Project GENIE: 100,000 cases and beyond".
 
 ## Supplemental figures
 
-2. Tumors without drivers - Jeff Bruce, UHN
+6. Tumors without drivers - Jeff Bruce, UHN
