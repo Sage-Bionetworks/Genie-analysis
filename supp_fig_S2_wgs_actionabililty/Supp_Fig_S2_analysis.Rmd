@@ -1,5 +1,5 @@
 ---
-title: "GENIE Analysis example"
+title: "GENIE Analysis: Supplementary Figure 2"
 output:
   html_document:
     df_print: paged
