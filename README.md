@@ -1,6 +1,16 @@
-# Genie Analysis
+# GENIE Analysis
 
-This repository will contain analysis code (R, Python, SQL...) to assist with users interacting with the GENIE public data.  Please view the [contributing guide](CONTRIBUTING.md) to learn how to add to this repository.
+This repository contains code used to generate figures for the Project GENIE 
+manuscript "AACR Project GENIE: 100,000 cases and beyond".  
 
-* clinical_attribute_dist: Contains example Python and R code to interact with Synapse and obtain clinical attribute distributions.
-* 100k: Contains analysis code for GENIE 100K paper.
+## Main figures 
+
+3. Virtual trial matching - Tali Mazor, James Lindsay, Priti Kumari, DFCI
+
+4. Actionable and resistant mutations - Michelle Green and  Jonathan Bell, DUKE
+
+5. Driver mutations in rare cancers - Stephen-John Sammut, Gary Doherty, CRUK 
+
+## Supplemental figures
+
+2. Tumors without drivers - Jeff Bruce, UHN
