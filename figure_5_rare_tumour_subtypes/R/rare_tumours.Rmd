@@ -1,0 +1,241 @@
+---
+title: "Characterise rare tumour mutational landscape in Project GENIE"
+author: "Stephen-John Sammut"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r load-data, echo=F, cache=T}
+
+rm(list=ls())
+
+library (ggplot2)
+library (pheatmap)
+library (ggrepel)
+library (gridExtra)
+library (data.table)
+library (stringr)
+
+#FDR cut-off
+FDR<-0.05
+
+
+#change to analysis root directory
+baseDirectory <- "figure_5_rare_tumour_subtypes/"
+setwd(baseDirectory)
+
+dir.output2020 <- paste0(baseDirectory,"/data/2020plus/output/")
+dir.input2020  <- paste0(baseDirectory,"/data/2020plus/input/")
+dir.genie      <- paste0(baseDirectory,"/data/genie-data/")
+  
+```
+
+```{r create-supp-figure-5a}
+
+stats<-read.table(paste0(dir.genie,"rareTumourMutationFrequencyMatrix.tsv"),sep="\t",header = T)
+stats$X<-str_to_title(stats$X, locale = "en")
+stats$X=gsub("_"," ",stats$X)
+stats$X[stats$X=="Ampulla of vater"]<-"Ampulla of Vater"
+stats$X[stats$X=="Head neck"]<-"Head & neck"
+stats$X[stats$X=="Pns"]<-"PNS"
+
+pdf("Supp_Fig_5a.pdf",height=2.5,width=2.5)
+ggplot(stats[stats$X!="Thyroid",],aes(x=log10(numSamples),y=log10(numMuts)))+
+  geom_point(size=0.8,color="red")+
+  geom_text_repel(aes(label=X),size=1.8,max.overlaps = 20,force = 2, min.segment.length = 0.1)+
+  labs(x="Number of tumors (log10)",y="Total mutations (log10)")+
+  theme_bw(base_size = 6)
+dev.off()
+```
+
+
+```{r load-2020plus-input}
+muts<-data.frame(fread(paste0(dir.input2020,"rareTumourMutationCalls.tsv")),stringsAsFactors = F)
+#35,312 mutations called in rare tumours
+nrow(muts)
+#1108 genes
+length(unique(muts$Hugo_Symbol))
+```
+
+
+```{r load-2020plus-output, echo=F, cache=T}
+
+output2020 <- read.table(paste0(dir.output2020,"genie_2020plus_output.txt"),sep = "\t",stringsAsFactors = F,header = T)
+
+o <- output2020[(output2020$driver.q.value<FDR & 
+                   (output2020$tsg.q.value<FDR | output2020$oncogene.q.value<FDR)),]
+
+#171 genes were identified as potential drivers.
+dim(o)
+
+#subset the mutation data to rare drivers only
+muts<-muts[muts$Hugo_Symbol %in% o$gene,]
+
+#keep those present in at least 5 samples
+t=sort(table(muts$Hugo_Symbol))
+o=o[!o$gene %in% names(t[t<5]),]
+
+e1=o[o$oncogene.q.value<FDR,]
+e2=o[o$tsg.q.value<FDR,]
+ord=c(e1[order(e1$oncogene.score,decreasing = T),"gene"],e2[order(e2$tsg.score,decreasing = F),"gene"])
+```
+
+
+```{r create-supp-figure-5a}
+
+freq<-head(names(sort(table(muts$Hugo_Symbol),decreasing = T)),30)
+
+mf<-muts[muts$Hugo_Symbol%in%freq,]
+mf$class<-mf$Variant_Classification
+mf$class[mf$class %in% c("Nonsense_Mutation","Frame_Shift_Del","Frame_Shift_Ins","Nonstop_Mutation",
+                         "Splice_Site", "Splice_Region")]<-"Truncating"
+
+mf$class[mf$class %in% c("3'UTR","5'UTR","5'Flank","Translation_Start_Site","Intron","Silent")]<-"Other"
+mf$class[mf$class %in% c("In_Frame_Del","In_Frame_Ins")]<-"Other"
+mf$class[mf$class %in% c("Missense_Mutation")]<-"Missense"
+
+mf$Hugo_Symbol<-factor(mf$Hugo_Symbol,levels=rev(freq))
+mf$class<-factor(mf$class,levels=c("Missense","Truncating","Inframe indel","Silent","Other"))
+
+Supp_Fig_5a_1 <-ggplot(mf,aes(x=Hugo_Symbol,fill=class))+
+  geom_histogram(stat="count")+
+  labs(x="Hugo symbol",y="Frequency")+
+  coord_flip()+
+  scale_fill_manual(name="Mutation",values=c("#F4D35E","#0D3B66","#83C5BE","#7C9082","orange"))+
+  theme_bw(base_size = 6)+
+  theme(axis.text.y = element_text(face="italic"))+
+  theme(plot.margin = unit(c(0.5,0.1,0.5,0.5), "lines"))+
+  guides(fill="none")
+
+
+op=o[o$gene %in% freq,]
+op$score<-op$oncogene.score
+op$type<-"ONC"
+op[op$tsg.q.value<FDR,"score"]<-op[op$tsg.q.value<FDR,"tsg.score"]
+op[op$tsg.q.value<FDR,"type"]<-"TSG"
+op$pos=1
+op$gene<-factor(op$gene,levels=rev(freq))
+Supp_Fig_5a_2<-ggplot(op,aes(x=gene,y=pos,fill=type))+
+  geom_tile(color="white")+
+  geom_text(aes(label=round(score,2)),color="white",size=1.6) +
+  scale_fill_manual(name="Driver", values=rev(c("#0D3B66","#FB4D3D")))+
+  coord_flip()+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        panel.grid = element_blank())+
+  theme(plot.margin = unit(c(0,0,0,0), "lines"))+
+  guides(fill="none")
+
+
+gA=ggplot_gtable(ggplot_build(Supp_Fig_5a_1))
+gC=ggplot_gtable(ggplot_build(Supp_Fig_5a_2))
+maxHeights = grid::unit.pmax(gA$heights, gC$heights)
+gA$heights <- as.list(maxHeights)
+gC$heights <- as.list(maxHeights)
+Supp_Fig_5a<-grid.arrange(
+  arrangeGrob(gA,gC,nrow=1,widths=c(4,0.5))
+)
+
+pdf("Supp_Fig_5b.pdf",height=2.6,width=3)
+ggarrange(Supp_Fig_5a)
+dev.off()
+
+rm(Supp_Fig_5a_1,Supp_Fig_5a_2,Supp_Fig_5a,gA,gC,maxHeights,e1,e2)
+```
+
+
+```{r create-figure-5}
+
+cvgMatrix<-readRDS(paste0(dir.genie,"coverageMatrix.RData"))
+
+getMutationSummary<-function(cvgMat,mutMat) {
+  #number of samples with sequenced gene
+  a<-data.frame(NumPanel=sort(apply(cvgMat,1, function(x) sum(x==T))))
+  
+  #number of samples with any mutation
+  #some samples can have more than one mutation!
+  g<-table(mutMat$Tumor_Sample_Barcode,mutMat$Hugo_Symbol)
+  g[g>1]<-1
+  colSums(g)
+  
+  b<-data.frame(NumMut.all=colSums(g))
+  c<-merge(b,a,by=0,all=T)
+  c[is.na(c)]<-0
+  #remove silent and non-coding mutations
+  mutMat.nonsilent=mutMat[!mutMat$Variant_Classification %in% c("3'Flank","3'UTR","5'Flank","5'UTR","Intron","Silent","Translation_Start_Site"),]
+  
+  d<-table(mutMat.nonsilent$Tumor_Sample_Barcode,mutMat.nonsilent$Hugo_Symbol)
+  d[d>1]<-1
+  d<-data.frame(NumMut.nonsilent=colSums(d))
+  
+  
+  c<-merge(c,d,by.x=1, by.y=0,all=T)
+  colnames(c)<-c("Hugo","NumMut.all","NumPanel","NumMut.nonsilent")
+  c<-c[,c(1,3,2,4)]
+  c[is.na(c)]<-0
+  c$Freq.all<-round(c$NumMut.all/c$NumPanel,4)
+  c$Freq.nonsilent<-round(c$NumMut.nonsilent/c$NumPanel,4)
+  c=c[c$NumPanel>0,]
+  c$Hugo=as.character(c$Hugo)
+  c
+}
+
+
+mutRs<-list()
+for (c in unique(muts$class)){
+  m<-muts[muts$class==c,]
+  cv<-cvgMatrix[,colnames(cvgMatrix) %in% unique(m$Tumor_Sample_Barcode)]
+  if (ncol(cv)>0){
+    mutRs[[c]]=getMutationSummary(cv,m)
+    mutRs[[c]]$class <- c
+  }
+}
+
+m<-do.call(rbind,mutRs)
+
+head(m)
+#need a minimum of 10 cases sequenced to display a mutation
+m[m$NumPanel<10 &m$NumMut.nonsilent>0,"Freq.nonsilent"]<-0
+
+d<-dcast(data = m,Hugo~class,value.var="Freq.nonsilent")
+d[is.na(d)]<-0
+rownames(d)<-d[,1];d<-d[,-1]
+
+empty<-apply(d,1,function(x) all(x<0.1))
+names(empty[empty==T])
+d<-d[!rownames(d) %in% names(empty[empty==T]),]
+
+d[is.na(d)]<-0
+mat_breaks<-c(0,0.05,0.1,0.2,0.4,0.6,1)
+color= rev(c( "##0c2a44","##154a76","##2174b9","#2172b5","#e2eef5","#ffffff"))
+colnames(d) <- gsub("_"," ",colnames(d))
+
+newnames <- lapply(
+  rownames(d),
+  function(x) bquote(italic(.(x))))
+color= rev(c( "#0c2a44","#154a76","#2174b9","#5aa4e2","#add2f0","#ECF0F1"))
+
+colnames(d)<-str_to_title(colnames(d), locale = "en")
+
+pdf("Figure5.pdf",width=8,height=5,useDingbats = F)
+pheatmap(t(d),  border_color = "white",legend = F,
+         legend_breaks =mat_breaks,cellwidth = 10,cellheight = 10,fontsize = 10,
+         angle_col = 90,
+         treeheight_col = 15,
+         treeheight_row = 20,
+         breaks = mat_breaks,
+         color  = color,
+         clustering_distance_rows = "euclidean",
+         clustering_method = "ward.D2",
+         labels_col = as.expression(newnames)
+)
+dev.off()
+
+```
+
+
+
+
