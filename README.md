@@ -13,4 +13,8 @@ manuscript "AACR Project GENIE: 100,000 cases and beyond".
 
 ## Supplemental figures
 
+3. Gene-level mutation frequencies in GENIE versus TCGA - Matthew Galvin, Brady Bernard, PROV
+
+4. Summary of gene-level mutation frequencies - Matthew Galvin, Brady Bernard, PROV
+
 6. Tumors without drivers - Jeff Bruce, UHN
