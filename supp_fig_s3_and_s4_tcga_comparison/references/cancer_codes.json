@@ -1,0 +1,177 @@
+{
+    "cancer_codes": [
+        {"tcga_cancer_code": "LAML", "genie_cancer_code": "AML", "cancer_type_label": "Acute Myeloid Leukemia"},
+        {"tcga_cancer_code": "ACC",  "genie_cancer_code": "ACC", "cancer_type_label": "Adrenocortical Carcinoma"},
+        {"tcga_cancer_code": "BLCA", "genie_cancer_code": "BLCA", "cancer_type_label": "Bladder Urothelial Carcinoma"},
+        {"tcga_cancer_code": "LGG",  "genie_cancer_code": "LGGNOS", "cancer_type_label": "Brain Lower Grade Glioma"},
+        {"tcga_cancer_code": "BRCA", "genie_cancer_code": "BRCA", "cancer_type_label": "Breast Invasive Carcinoma"},
+        {"tcga_cancer_code": "CESC", "genie_cancer_code": "CESC", "cancer_type_label": "Cervical Squamous Cell Carcinoma and Endocervical Adenocarcinoma"},
+        {"tcga_cancer_code": "CHOL", "genie_cancer_code": "CHOL", "cancer_type_label": "Cholangiocarcinoma"},
+        {"tcga_cancer_code": "COAD", "genie_cancer_code": "COAD", "cancer_type_label": "Colon Adenocarcinoma"},
+        {"tcga_cancer_code": "ESCA", "genie_cancer_code": "ESCA", "cancer_type_label": "Esophageal Carcinoma"},
+        {"tcga_cancer_code": "GBM",  "genie_cancer_code": "GBM", "cancer_type_label": "Glioblastoma Multiforme"},
+        {"tcga_cancer_code": "HNSC", "genie_cancer_code": "HNSC", "cancer_type_label": "Head and Neck Squamous Cell Carcinoma"},
+        {"tcga_cancer_code": "KICH", "genie_cancer_code": "CHRCC", "cancer_type_label": "Kidney Chromophobe"},
+        {"tcga_cancer_code": "KIRC", "genie_cancer_code": "CCRCC", "cancer_type_label": "Kidney Renal Clear Cell Carcinoma"},
+        {"tcga_cancer_code": "KIRP", "genie_cancer_code": "PRCC", "cancer_type_label": "Kidney Renal Papillary Cell Carcinoma"},
+        {"tcga_cancer_code": "LIHC", "genie_cancer_code": "HCC", "cancer_type_label": "Liver Hepatocellular Carcinoma"},
+        {"tcga_cancer_code": "LUAD", "genie_cancer_code": "LUAD", "cancer_type_label": "Lung Adenocarcinoma"},
+        {"tcga_cancer_code": "LUSC", "genie_cancer_code": "LUSC", "cancer_type_label": "Lung Squamous Cell Carcinoma"},
+        {"tcga_cancer_code": "DLBC", "genie_cancer_code": "DLBCLNOS", "cancer_type_label": "Lymphoid Neoplasm Diffuse Large B-cell Lymphoma"},
+        {"tcga_cancer_code": "MESO", "genie_cancer_code": "PLMESO", "cancer_type_label": "Mesothelioma"},
+        {"tcga_cancer_code": "OV",   "genie_cancer_code": "SOC", "cancer_type_label": "Ovarian Serous Cystadenocarcinoma"},
+        {"tcga_cancer_code": "PAAD", "genie_cancer_code": "PAAD", "cancer_type_label": "Pancreatic Adenocarcinoma"},
+        {"tcga_cancer_code": "PCPG", "genie_cancer_code": "PHC", "cancer_type_label": "Pheochromocytoma and Paraganglioma"},
+        {"tcga_cancer_code": "PRAD", "genie_cancer_code": "PRAD", "cancer_type_label": "Prostate Adenocarcinoma"},
+        {"tcga_cancer_code": "READ", "genie_cancer_code": "READ", "cancer_type_label": "Rectum Adenocarcinoma"},
+        {"tcga_cancer_code": "SARC", "genie_cancer_code": "SOFT_TISSUE", "cancer_type_label": "Sarcoma"},
+        {"tcga_cancer_code": "SKCM", "genie_cancer_code": "SKCM", "cancer_type_label": "Skin Cutaneous Melanoma"},
+        {"tcga_cancer_code": "STAD", "genie_cancer_code": "STAD", "cancer_type_label": "Stomach Adenocarcinoma"},
+        {"tcga_cancer_code": "TGCT", "genie_cancer_code": "NSGCT", "cancer_type_label": "Testicular Germ Cell Tumors"},
+        {"tcga_cancer_code": "THYM", "genie_cancer_code": "THYM", "cancer_type_label": "Thymoma"},
+        {"tcga_cancer_code": "THCA", "genie_cancer_code": "THYROID", "cancer_type_label": "Thyroid Carcinoma"},
+        {"tcga_cancer_code": "UCS",  "genie_cancer_code": "UCS", "cancer_type_label": "Uterine Carcinosarcoma"},
+        {"tcga_cancer_code": "UCEC", "genie_cancer_code": "UCEC", "cancer_type_label": "Uterine Corpus Endometrial Carcinoma"},
+        {"tcga_cancer_code": "UVM",  "genie_cancer_code": "UM",  "cancer_type_label": "Uveal Melanoma"}
+    ],
+    "oncotree_rollup": [
+        {
+            "genie_cancer_code": "AML", 
+            "rollup_codes": ["AML", "AMLMRC", "AMLRGA", "AMLNOS", "MPRDS", "MS", "TMN",
+                "AMLRBM15MKL1", "AMLBCRABL1", "AMLCEBPA", "AMLNPM1", "AMLRUNX1", "AMLRARA", "AMLCBFBMYH11", "AMLGATA2MECOM",
+                "AMLDEKNUP214", "AMLRUNX1RUNX1T1", "AMLMLLT3KMT2A", "APLPMLRARA", "AM", "AMLMD", "AWM", "ABL", "AMKL", "AMOL",
+                "AMML", "APMF", "PERL", "MLADS", "TAM", "TAML", "TMDS"]
+        },
+        {
+            "genie_cancer_code": "ACC", 
+            "rollup_codes": ["ACC"]
+        },
+        {
+            "genie_cancer_code": "BLCA", 
+            "rollup_codes": ["BLCA"]
+        },
+        {
+            "genie_cancer_code": "LGGNOS", 
+            "rollup_codes": ["LGGNOS", "ASTR", "AASTR", "ODG", "AODG", "OAST", "AOAST"]
+        },
+        {
+            "genie_cancer_code": "BRCA", 
+            "rollup_codes": ["BRCA", "ACBC", "BRSRCC", "BRCANOS", "BRCNOS", "CSNOS", "IDC", "ILC", "IMMC", "MDLC", "SPC"]
+        },
+        {
+            "genie_cancer_code": "CESC", 
+            "rollup_codes": ["CESC", "ECAD"]
+        },
+        {
+            "genie_cancer_code": "CHOL", 
+            "rollup_codes": ["CHOL", "EHCH", "IHCH", "PHCH"]
+        },
+        {
+            "genie_cancer_code": "CML", 
+            "rollup_codes": ["CML", "CMLBCRABL1"]
+        },
+        {
+            "genie_cancer_code": "COAD", 
+            "rollup_codes": ["COAD"]
+        },
+        {
+            "genie_cancer_code": "ESCA", 
+            "rollup_codes": ["ESCA"]
+        },
+        {
+            "genie_cancer_code": "GBM", 
+            "rollup_codes": ["GBM"]
+        },
+        {
+            "genie_cancer_code": "HNSC", 
+            "rollup_codes": ["HNSC", "HNSCUP", "HPHSC", "LXSC", "OCSC", "OPHSC", "SNSC"]
+        },
+        {
+            "genie_cancer_code": "CHRCC", 
+            "rollup_codes": ["CHRCC"]
+        },
+        {
+            "genie_cancer_code": "CCRCC", 
+            "rollup_codes": ["CCRCC", "SCCRCC"]
+        },
+        {
+            "genie_cancer_code": "PRCC", 
+            "rollup_codes": ["PRCC"]
+        },
+        {
+            "genie_cancer_code": "HCC", 
+            "rollup_codes": ["HCC"]
+        },
+        {
+            "genie_cancer_code": "LUAD", 
+            "rollup_codes": ["LUAD"]
+        },
+        {
+            "genie_cancer_code": "LUSC", 
+            "rollup_codes": ["LUSC"]
+        },
+        {
+            "genie_cancer_code": "DLBCLNOS", 
+            "rollup_codes": ["DLBCLNOS", "ABC", "GCB"]
+        },
+        {
+            "genie_cancer_code": "PLMESO", 
+            "rollup_codes": ["PLMESO"]
+        },
+        {
+            "genie_cancer_code": "SOC", 
+            "rollup_codes": ["SOC", "HGSOC", "LGSOC"]
+        },
+        {
+            "genie_cancer_code": "PAAD", 
+            "rollup_codes": ["PAAD"]
+        },
+        {
+            "genie_cancer_code": "PHC", 
+            "rollup_codes": ["PHC", "PGNG"]
+        },
+        {
+            "genie_cancer_code": "PRAD", 
+            "rollup_codes": ["PRAD"]
+        },
+        {
+            "genie_cancer_code": "READ", 
+            "rollup_codes": ["READ"]
+        },
+        {
+            "genie_cancer_code": "SOFT_TISSUE", 
+            "rollup_codes": ["SOFT_TISSUE", "AA", "ASPS", "AFH", "ANGS", "ALT", "CCS", "DCS", "DES", "DSRCT", "EHAE", "EPIS", "ESST",
+                "FIBS", "GIST", "GS", "HEMA", "IFS", "IMT", "INTS", "LM", "LMS", "LIPO", "LGFMS", "MGST", "MF", "IMS", "MPC", "MFS", "MYXO",
+                "PGNG", "PECOMA", "PMHE", "RAS", "RMS", "RCSNOS", "SARCNOS", "STMYEC", "SFT", "SYNS", "TGCT", "MFH", "HDCS", "PTES", "SEF", "DDLS",
+                "MRLS", "PLLS", "WDLS", "OFMT", "ARMS", "ERMS", "PLRMS", "SCRMS", "SCSRMS"]
+        },
+        {
+            "genie_cancer_code": "SKCM", 
+            "rollup_codes": ["SKCM"]
+        },
+        {
+            "genie_cancer_code": "STAD", 
+            "rollup_codes": ["STAD", "DSTAD", "ISTAD", "MSTAD", "PSTAD", "TSTAD"]
+        },
+        {
+            "genie_cancer_code": "NSGCT", 
+            "rollup_codes": ["NSGCT", "TCCA", "EMBCA", "GCTSTM", "MGCT", "TT", "TYST"]
+        },
+        {
+            "genie_cancer_code": "THYM", 
+            "rollup_codes": ["THYM"]
+        },
+        {
+            "genie_cancer_code": "THYROID", 
+            "rollup_codes": ["THYROID", "THAP", "THHC", "HTAT", "THME", "OAT", "THPD", "WDTC", "THFO", "THPA"]
+        },
+        {
+            "genie_cancer_code": "UCEC", 
+            "rollup_codes": ["UCEC", "UCS", "UPDC", "UASC", "UCCC", "UDDC", "UEC", "UMNC", "UMEC", "UMC", "UNEC", "USC", "UUC"]
+        },
+        {
+            "genie_cancer_code": "UM", 
+            "rollup_codes": ["UM"]
+        }
+    ]
+}

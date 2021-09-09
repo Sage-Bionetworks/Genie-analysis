@@ -1,0 +1,12 @@
+# Standard Workflow
+./docker-entrypoint VERSION
+cd /app/python
+python
+from tcga_genie_comparison import TcgaGenieComparison
+x = TcgaGenieComparison()
+x.execute()
+
+# Deviations from standard workflow....
+from tcga_genie_comparison import TcgaGenieComparison
+x = TcgaGenieComparison()
+x.handle_deviations()
