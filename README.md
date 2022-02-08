@@ -18,3 +18,5 @@ manuscript "AACR Project GENIE: 100,000 cases and beyond".
 4. Summary of gene-level mutation frequencies - Matthew Galvin, Brady Bernard, PROV
 
 6. Tumors without drivers - Jeff Bruce, UHN
+
+7. Tumor mutation burden by contributing center and by cancer subtype - Haley Hunter-Zinck, Sage Bionetworks
