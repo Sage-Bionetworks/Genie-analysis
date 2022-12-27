@@ -4,7 +4,7 @@ pandas==1.1.5
 scikit-learn==0.23.2
 python-dotenv==0.15.0
 pytest==6.2.1
-setuptools==51.1.1
+setuptools==65.5.1
 synapseclient==2.3.0
 google-api-core==1.26.1
 google-api-python-client==1.8.3
